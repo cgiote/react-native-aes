@@ -14,6 +14,27 @@
 @implementation AesCrypt
 
 + (NSString *) toHex:(NSData *)nsdata {
+    NSString * hexStr = [NSString stringWithFormat:@"%@", nsdata];
+    for(NSString * toRemove in [NSArray arrayWithObjects:@"<", @">", @" ", nil])
+        hexStr = [hexStr stringByReplacingOccurrencesOfString:toRemove withString:@""];
+    return hexStr;
+}
+
++ (NSData *) fromHex: (NSString *)string {
+    NSMutableData *data = [[NSMutableData alloc] init];
+    unsigned char whole_byte;
+    char byte_chars[3] = {'\0','\0','\0'};
+    for (int i = 0; i < ([string length] / 2); i++) {
+        byte_chars[0] = [string characterAtIndex:i*2];
+        byte_chars[1] = [string characterAtIndex:i*2+1];
+        whole_byte = strtol(byte_chars, NULL, 16);
+        [data appendBytes:&whole_byte length:1];
+    }
+    return data;
+}
+
+/* REVERT hex conversion back
++ (NSString *) toHex:(NSData *)nsdata {
     const unsigned char *bytes = (const unsigned char *)nsdata.bytes;
     NSMutableString *hex = [NSMutableString new];
     for (NSInteger i = 0; i < nsdata.length; i++) {
@@ -34,6 +55,7 @@
     }
     return data;
 }
+*/
 
 + (NSString *) pbkdf2:(NSString *)password salt: (NSString *)salt cost: (NSInteger)cost length: (NSInteger)length algorithm:(NSString *)algorithm{
     // Data of String to generate Hash key(hexa decimal string).
